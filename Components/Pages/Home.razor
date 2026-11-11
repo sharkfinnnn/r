@@ -1,0 +1,742 @@
+﻿@page "/"
+@rendermode InteractiveServer
+
+@using Icedodo.Services
+@inject IVideoServices videoServices
+
+
+<header class="site-header">
+    <h4 style="color: white;">Ice Dodo List</h4>
+
+    <div class="header-buttons">
+        <NavLink href="/" class="header-btn" Match="NavLinkMatch.All">
+            Unlimited List
+        </NavLink>
+
+        <NavLink href="/levels" class="header-btn">
+            Levels List
+        </NavLink>
+    </div>
+</header>
+
+<div class="page-layout">
+
+    <div class="table-container">
+        <h1 class="p-3; text-center;"style="color: white;">  Unlimited List</h1>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in users)
+                {
+                    <tr @onclick="() => SelectUser(user)"
+                        class="clickable-row @(selectedUser?.Id == user.Id ? "selected-row" : "")">
+
+                        <td>
+                            <strong class="number">@user.placement</strong>
+                        </td>
+
+                        <td>
+                            @if (!string.IsNullOrEmpty(user.videoUrl))
+                            {
+                                <iframe class="video-frame"
+                                        src="@user.videoUrl"
+                                        title="@user.name"
+                                        allowfullscreen>
+                                </iframe>
+                            }
+                            else if (!string.IsNullOrEmpty(user.imageUrl))
+                            {
+                                <img class="video-image"
+                                     src="@user.imageUrl"
+                                     alt="@user.name" />
+                            }
+                        </td>
+
+                        <td>
+                            <strong class="video-name">@user.name</strong>
+                            <br />
+                            <small class="text-muted">
+                                Verified by @user.verifier
+                            </small>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    @if (selectedUser != null)
+    {
+        <div class="info-panel">
+
+
+            <h3>@selectedUser.name</h3>
+
+            <p class="name1">Placement: @selectedUser.placement</p>
+            <p class="name1">Verifier: @selectedUser.verifier</p>
+            <p class="name1">Created by: @selectedUser.creator</p>
+            <p class ="name1">VICTORS:</p>
+            <p>
+                <a class="name1" href="@selectedUser.Victor1v.Replace("embed/", "watch?v=")"
+                   target="_blank">
+                    @selectedUser.Victor1
+                </a>
+            </p>
+            <p>
+                <a class="name1" href="@selectedUser.Victor2v.Replace("embed/", "watch?v=")"
+                   target="_blank">
+                    @selectedUser.Victor2
+                </a>
+            </p>
+            <p>
+                <a class="name1" href="@selectedUser.Victor3v.Replace("embed/", "watch?v=")"
+                   target="_blank">
+                    @selectedUser.Victor3
+                </a>
+            </p>
+            <p>
+                <a class="name1" href="@selectedUser.Victor4v.Replace("embed/", "watch?v=")"
+                   target="_blank">
+                    @selectedUser.Victor4
+                </a>
+            </p>
+            <p>
+                <a class="name1" href="@selectedUser.Victor5v.Replace("embed/", "watch?v=")"
+       target="_blank">
+                    @selectedUser.Victor5
+                </a>
+            </p>
+
+          
+
+        </div>
+    }
+
+</div>
+    
+    
+<div>
+    <style>
+            * {
+                box-sizing: border-box;
+            }
+
+            .video-frame,
+            .video-image {
+                width: 400px;
+                height: 225px;
+                border: none;
+                border-radius: 10px;
+            }
+
+            .video-image {
+                object-fit: cover;
+                display: block;
+            }
+
+            .name {
+                font-size: 55px;
+                color:white;
+            }
+
+            .name1 {
+                font-size: 28px;
+                color: white;
+
+            }
+
+            .number {
+                font-size:75px;
+            }
+    
+         
+            .table {
+                background-color: transparent !important;
+                --bs-table-bg: transparent;
+                --bs-table-striped-bg: transparent;
+                --bs-table-color: white;
+                --bs-table-striped-color: white;
+                border-color: rgba(255, 255, 255, 0.2);
+            }
+
+               
+                .table tbody tr > td {
+                    background-color: transparent !important;
+                    color: white !important;
+                }
+
+            
+                .table tbody tr.clickable-row:not(.selected-row):hover > td {
+                    background-color: rgba(255, 255, 255, 0.3) !important;
+                    color: white !important;
+                    cursor: pointer;
+                }
+
+               
+                .table tbody tr.selected-row > td,
+                .table tbody tr.selected-row:hover > td {
+                    background-color: rgba(255, 255, 255, 0.5) !important;
+                    color: white !important;
+                    cursor: pointer;
+                }
+
+            body {
+                background-image: url('/images/bg.png');
+                background-size: cover;
+                background-position: center;
+                background-repeat: no-repeat;
+                background-attachment: fixed;
+            }
+
+            .table tbody tr:hover td:first-child {
+                border-radius: 12px 0 0 12px;
+            }
+
+            .table tbody tr:hover td:last-child {
+                border-radius: 0 12px 12px 0;
+            }
+       
+            .table tbody tr:hover td:first-child,
+            .table tbody tr.selected-row td:first-child {
+                border-radius: 12px 0 0 12px;
+            }
+
+           
+            .table tbody tr:hover td:last-child,
+            .table tbody tr.selected-row td:last-child {
+                border-radius: 0 12px 12px 0;
+            }
+            .info-panel {
+                border-radius: 20px;
+            }
+            .table {
+                border-radius: 0 12px 12px 0;
+                overflow: hidden;
+                border-collapse: separate;
+                border-spacing: 0;
+            }
+
+            .page-layout {
+                display: grid;
+                grid-template-columns: minmax(0, 3fr) minmax(0, 1fr);
+                gap: 15px;
+                width: 100%;
+                max-width: 100%;
+            }
+
+            .table-container {
+                min-width: 0;
+                width: 100%;
+                overflow-x: auto;
+                
+            }
+
+            .info-panel {
+                min-width: 0;
+                width: 100%;
+                height:750px;
+                box-sizing: border-box;
+                padding: 20px;
+                background: rgba(70, 70, 70, 0.4);
+                color: white;
+                border-radius: 15px;
+                overflow-wrap: break-word;
+                position: sticky;
+                top: 20px;
+                align-self: start;
+            }
+
+            .info-video {
+                width: 100%;
+                aspect-ratio: 16 / 9;
+                border: none;
+            }
+
+            .table {
+                width: 100%;
+            }
+
+            .site-header {
+                display: flex;
+                align-items: center;
+                gap: 30px;
+                padding: 15px 25px;
+                background: rgba(0, 0, 0, 0.4);
+            }
+
+                .site-header h4 {
+                    color: white;
+                    margin: 0;
+                    font-size: 28px;
+                    line-height: 1;
+                }
+
+            .header-buttons {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+
+.header-btn {
+    padding: 8px 20px;
+    border: 1px solid white;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+    text-decoration: none;
+}
+
+.header-btn:hover {
+    background: rgba(255, 255, 255, 0.35);
+    color: white;
+}
+
+.header-btn.active {
+    background: rgba(255, 255, 255, 0.35);
+}
+    
+
+         
+    </style>
+</div>
+
+@code {
+    private IEnumerable<User> users = new[] {
+        new User { Id = 1, placement = "#1", name = "Heliopolis", verifier = "Loeh",videoUrl = "https://www.youtube.com/embed/N5MKAMbnwmI", creator= "Painkiller, Bumpo, Grebber & Zhou Yu", Victor1= "Loeh", Victor1v="https://www.youtube.com/embed/N5MKAMbnwmI"},
+        new User { Id = 2, placement = "#2", name = "Mayhem", verifier = "Loeh", videoUrl = "https://www.youtube.com/embed/PPAbfCCDrEA", creator= "Rocky707",Victor1= "Loeh", Victor1v="https://www.youtube.com/embed/PPAbfCCDrEA"},
+        new User { Id = 3, placement = "#3", name = "Evil Purple Crystals x2", verifier = "Loeh", videoUrl = "https://www.youtube.com/embed/8ghEwFVnnqs", creator= "Painkiller",Victor1= "Loeh", Victor1v="https://www.youtube.com/embed/8ghEwFVnnqs"},
+        new User { Id = 4, placement = "#4", name = "The Ballad of Painkiller and Bumpo", verifier = "Painkiller", videoUrl = "https://www.youtube.com/embed/5kpMS8KXOyQ", creator= "Painkiller & Bumpo",Victor1= "Painkiller", Victor1v="https://www.youtube.com/embed/5kpMS8KXOyQ",Victor2= "Loeh", Victor2v="https://www.youtube.com/embed/3lDzlJBuIqE",Victor3= "NaniOMGguy", Victor3v="https://www.youtube.com/embed/dgmegEfEsBM"},
+        new User { Id = 5, placement = "#5", name = "5D Demon Cinema", verifier = "Bumpo",videoUrl = "https://www.youtube.com/embed/PSodaB3ZzVw", creator= "Bumpo & Grebber",Victor1= "Bumpo", Victor1v="https://www.youtube.com/embed/PSodaB3ZzVw",Victor2= "Loeh", Victor2v="https://www.youtube.com/embed/xnJvo9Lmgwo"},
+        new User { Id = 6, placement = "#6", name = "Domine Avis", verifier = "Bazman",videoUrl = "https://www.youtube.com/embed/27nvdegdXL4", creator= "Painkiller",Victor1= "Bazman", Victor1v="https://www.youtube.com/embed/27nvdegdXL4",Victor2= "NaniOMGguy", Victor2v="https://www.youtube.com/embed/I7NqlOD7c5I"},
+        new User { Id = 7, placement = "#7", name = "Evil Purple Crystals", verifier = "Awehero", videoUrl = "https://www.youtube.com/embed/LfVb5eCoQXg", creator= "Painkiller",Victor1= "Awehero", Victor1v="https://www.youtube.com/embed/LfVb5eCoQXg",Victor2= "Loeh", Victor2v="https://www.youtube.com/embed/8ghEwFVnnqs",Victor3= "Zetta Ray", Victor3v="https://www.youtube.com/embed/Gd9vKbfQzug"},
+        new User { Id = 8, placement = "#8", name = "Slider in Hell", verifier = "Loeh", videoUrl = "https://www.youtube.com/embed/FXUOCMMHM4I", creator= "Awehero",Victor1= "Loeh", Victor1v="https://www.youtube.com/embed/FXUOCMMHM4I"},
+        new User { Id = 9, placement = "#9", name = "Wall Riders", verifier = "Dr. Mario", videoUrl = "https://www.youtube.com/embed/4pQi0RCi8XQ", creator= "Rocky707",Victor1= "Dr. Mario", Victor1v="https://www.youtube.com/embed/4pQi0RCi8XQ"},
+        new User { Id = 10, placement = "#10", name = "Treetusks", verifier = "Painkiller", videoUrl = "https://www.youtube.com/embed/BCBdjbe0dQc", creator= "Painkiller",Victor1= "Painkiller", Victor1v="https://www.youtube.com/embed/BCBdjbe0dQc"},
+        new User { Id = 11, placement = "#11", name = "Night On Bald Mountain", verifier = "Loeh", videoUrl = "https://www.youtube.com/embed/WCvHfDY6GH4", creator= "Born2BW",Victor1= "Loeh", Victor1v="https://www.youtube.com/embed/WCvHfDY6GH4",Victor2= "NaniOMGguy", Victor2v="https://www.youtube.com/embed/sd2uHyZEIHs",Victor3= "Sharkfinnnn", Victor3v="https://www.youtube.com/embed/YBpGt5xn4JA" },
+        new User { Id = 12, placement = "#12", name = "Glow Golf Galaxy 28.97s", verifier = "Loeh", imageUrl = "/images/ggg.png", creator= "Awehero",Victor1= "Loeh"},
+        new User { Id = 13,
+            placement = "#13", 
+            name = "Cyber Domain", 
+            verifier = "Brimstone", 
+            videoUrl = "https://www.youtube.com/embed/62vEn7Aghi8",
+            creator= "Brimstone",
+            Victor1= "Brimstone", Victor1v="https://www.youtube.com/embed/62vEn7Aghi8",
+            Victor2= "Zetta Ray", Victor2v="https://www.youtube.com/embed/fs3pyTLH6g4",
+            Victor3= "Loeh", Victor3v="https://www.youtube.com/embed/L3YmR8mqPYc" },
+        new User { Id = 14,
+            placement = "#14",
+            name = "Cosmic Canyon",
+            verifier = "Painkiller",
+            videoUrl = "https://www.youtube.com/embed/tF6pntcUhLE",
+            creator= "Painkiller",
+            Victor1= "Painkiller", Victor1v="https://www.youtube.com/embed/tF6pntcUhLE",
+            Victor2= "Zetta Ray", Victor2v="https://www.youtube.com/embed/qoGx2rBuy7Q",
+            Victor3= "Chillken", Victor3v="https://www.youtube.com/embed/SdZks_GF3x0",
+            Victor4= "Sharkfinnnn", Victor4v="https://www.youtube.com/embed/lqWyH3B56Fw",
+            Victor5= "NaniOMGguy", Victor5v="https://www.youtube.com/embed/9dooSB4ZKqw"},
+
+        new User { Id = 15,
+            placement = "#15",
+            name = "Diamond Blade",
+            verifier = "Bumpo",
+            videoUrl = "https://www.youtube.com/embed/2mg8gREm4vY",
+            creator= "Bumpo",
+            Victor1= "Bumpo", Victor1v="https://www.youtube.com/embed/2mg8gREm4vY",
+            Victor2= "DwangML", Victor2v="https://www.youtube.com/embed/BrKhbZuni9k",
+            Victor3= "Painkiller", Victor3v="https://www.youtube.com/embed/Qe5SsVhT4qg",
+            Victor4= "Zetta Ray", Victor4v="https://www.youtube.com/embed/Tbn99djcxG0", },
+
+         new User { Id = 16,
+            placement = "#16",
+            name = ".0001",
+            verifier = "Kazil",
+            videoUrl = "https://www.youtube.com/embed/1X6xllSnjIA",
+            creator= "Kazil",
+            Victor1= "Kazil", Victor1v="https://www.youtube.com/embed/1X6xllSnjIA",
+            Victor2= "Chillken", Victor2v="https://www.youtube.com/embed/U2LQyazEKqI",
+            Victor3= "NotUwUzi", Victor3v="https://www.youtube.com/embed/5oXBEej5LDQ", },
+
+        new User { Id = 17,
+            placement = "#17",
+            name = "Absolute Zero",
+            verifier = "Unknown",
+         imageUrl="/images/az.png",
+            creator= "Xdoomination",
+            Victor1= "NotUwUzi", Victor1v="https://www.youtube.com/embed/GM9t_YpFYlY", },
+
+        new User { Id = 18,
+            placement = "#18",
+            name = "Downstream at 66",
+            verifier = "Painkiller",
+            videoUrl = "https://www.youtube.com/embed/eG8Rlb1POv0",
+            creator= "Painkiller",
+            Victor1= "Painkiller", Victor1v="https://www.youtube.com/embed/eG8Rlb1POv0",
+            Victor2= "Sharkfinnnn", Victor2v="https://www.youtube.com/embed/-W4wlwxyozo"},
+
+        new User { Id = 19,
+            placement = "#19",
+            name = "Radiance",
+            verifier = "Painkiller",
+            videoUrl = "https://www.youtube.com/embed/8y40TfR9Wcc",
+            creator= "Painkiller",
+            Victor1= "Painkiller", Victor1v="https://www.youtube.com/embed/8y40TfR9Wcc",
+            Victor2= "Loeh", Victor2v="https://www.youtube.com/embed/Ohw8o8WNiQM",
+            Victor3= "Bazman", Victor3v="https://www.youtube.com/embed/27nvdegdXL4"},
+
+        new User { Id = 20,
+            placement = "#20",
+            name = "Negative Anti-Opposite",
+            verifier = "Sharkfinnnn",
+            videoUrl = "https://www.youtube.com/embed/YnzeGBaf2bY",
+            creator= "Zeus007",
+            Victor1= "Sharkfinnnn", Victor1v="https://www.youtube.com/embed/YnzeGBaf2bY", },
+
+         new User { Id = 21,
+            placement = "#21",
+            name = "Slider",
+            verifier = "Painkiller",
+            videoUrl = "https://www.youtube.com/embed/cnZAT41ANhA",
+            creator= "Awehero",
+            Victor1= "Awehero", Victor1v="https://www.youtube.com/embed/PV-Agmg5nzY",
+            Victor2= "Painkiller", Victor2v="https://www.youtube.com/embed/cnZAT41ANhA",
+            Victor3= "Chillken", Victor3v="https://www.youtube.com/embed/YJ2bxjt2vX8",
+            Victor4= "Loeh", Victor4v="https://www.youtube.com/embed/FXUOCMMHM4I",
+            Victor5= "Sharkfinnnn", Victor5v="https://www.youtube.com/embed/C4oDzofGdfA"},
+
+         new User { Id = 22,
+            placement = "#22",
+            name = "Tritanopia",
+            verifier = "Darrk_77",
+            videoUrl = "https://www.youtube.com/embed/YedGPCSM_rI",
+            creator= "Darrk_77",
+            Victor1= "Darrk_77", Victor1v="https://www.youtube.com/embed/YedGPCSM_rI",
+            Victor2= "DwangML", Victor2v="https://www.youtube.com/embed/9oRpmiHGYZc",
+            Victor3="Loeh", Victor3v="https://www.youtube.com/embed/u9ZI1wEgDgs"},
+
+         new User { Id = 23,
+            placement = "#23",
+            name = "Limbo",
+            verifier = "Brimstone",
+            videoUrl = "https://www.youtube.com/embed/5FFDLq9gOgo",
+            creator= "Brimstone, Applepear & Darrk_77",
+            Victor1= "Brimstone", Victor1v="https://www.youtube.com/embed/5FFDLq9gOgo",
+            Victor2= "Sharkfinnnn", Victor2v="https://www.youtube.com/embed/24TIq_GL6P8"},
+
+         new User { Id = 24,
+            placement = "#24",
+            name = "Skill Trial",
+            verifier = "Dr. Mario",
+            videoUrl = "https://www.youtube.com/embed/gsEVMWe6aAI",
+            creator= "Zhou Yu",
+            Victor1= "DonW15", Victor1v="https://www.youtube.com/embed/ivUrRQFlAsc",
+            Victor2= "NotUwUzi", Victor2v="https://www.youtube.com/embed/eNb9xv1vhhY",
+            Victor3= "Dr. Mario", Victor3v="https://www.youtube.com/embed/gsEVMWe6aAI"},
+
+         new User { Id = 25,
+            placement = "#25",
+            name = "Iris",
+            verifier = "Sharkfinnnn",
+            videoUrl = "https://www.youtube.com/embed/ISe0kFwcIP8",
+            creator= "Sharkfinnnn",
+            Victor1= "Sharkfinnnn", Victor1v="https://www.youtube.com/embed/ISe0kFwcIP8", },
+
+          new User { Id = 26,
+            placement = "#26",
+            name = "Across Lava 2025",
+            verifier = "Unknown",
+           imageUrl="/images/al2025.png",
+            creator= "MooshMM",
+            Victor1= "Chillken", Victor1v="https://www.youtube.com/embed/CZ07Ss_CfcM", },
+
+          new User { Id = 27,
+            placement = "#27",
+            name = "Cyan Citadel",
+            verifier = "Zhou Yu",
+            videoUrl = "https://www.youtube.com/embed/cnZAT41ANhA",
+            creator= "Zhou Yu",
+            Victor1= "Zhou Yu", Victor1v="https://www.youtube.com/embed/2nQT-_hkGDM",
+            Victor2= "Painkiller", Victor2v="https://www.youtube.com/embed/BQJbR26t35A",
+            Victor3= "Dr. Mario", Victor3v="https://www.youtube.com/embed/rHZ3U1EBX5A",
+            Victor4= "Zetta Ray", Victor4v="https://www.youtube.com/embed/-WnSJcbauzE"},
+
+          new User { Id = 28,
+            placement = "#28",
+            name = "Upside Down City",
+            verifier = "Zhou Yu",
+            videoUrl = "https://www.youtube.com/embed/egp4tkHJa1A",
+            creator= "Zhou Yu",
+            Victor1= "Zhou Yu", Victor1v="https://www.youtube.com/embed/egp4tkHJa1A", },
+
+          new User { Id = 29,
+            placement = "#29",
+            name = "Yerevan Firework Watchers",
+            verifier = "Zetta Ray",
+             imageUrl="/images/yfw.png",
+            creator= "Darrk_77",
+            Victor1= "Loeh", Victor1v="https://www.youtube.com/embed/u9ZI1wEgDgs", },
+
+          new User { Id = 30,
+            placement = "#30",
+            name = "Detecting Multiple Levithan Class Lifeforms in the Region",
+            verifier = "Painkiller",
+            videoUrl = "https://www.youtube.com/embed/agiG7JpU9RQ",
+            creator= "Painkiller",
+            Victor1= "Painkiller", Victor1v="https://www.youtube.com/embed/agiG7JpU9RQ",
+            Victor2= "Zetta Ray", Victor2v="https://www.youtube.com/embed/ynYr-c2-XT0"},
+
+          new User { Id = 31,
+            placement = "#31",
+            name = "Nyx",
+            verifier = "Sharkfinnnn",
+            videoUrl = "https://www.youtube.com/embed/xDo5gSLpqyQ",
+            creator= "Sharkfinnnn",
+            Victor1= "Sharkfinnnn", Victor1v="https://www.youtube.com/embed/xDo5gSLpqyQ", },
+
+          new User { Id = 32,
+            placement = "#32",
+            name = "Wings of a Butterfly (No Shortcut)",
+            verifier = "Loeh",
+            videoUrl = "https://www.youtube.com/embed/Bvdeh5e8HQU",
+            creator= "Thasi & Artem.ss",
+            Victor1= "Loeh", Victor1v="https://www.youtube.com/embed/Bvdeh5e8HQU",
+            Victor2= "Zetta Ray", Victor2v="https://www.youtube.com/embed/S5GpVzA4yW8"},
+
+          new User { Id = 33,
+            placement = "#33",
+            name = "Azul Lights",
+            verifier = "Unknown",
+             imageUrl="/images/azul_lights.png",
+            creator= "Bumpo & Weinerdog",
+            Victor1= "Micky Mouse", Victor1v="https://www.youtube.com/embed/qHsF7Juk7Kg", },
+
+          new User { Id = 34,
+            placement = "#34",
+            name = "Pipe Dreams II: Electric Boogaloo",
+            verifier = "Darrk_77",
+            videoUrl = "https://www.youtube.com/embed/H_C-sdSbEHU",
+            creator= "Darrk_77",
+            Victor1= "Darrk_77", Victor1v="https://www.youtube.com/embed/H_C-sdSbEHU", },
+
+          new User { Id = 35,
+            placement = "#35",
+            name = "Bathroom Window Fiasco",
+            verifier = "Painkiller",
+            videoUrl = "https://www.youtube.com/embed/l0D5XeZ9az4",
+            creator= "Painkiller",
+            Victor1= "Painkiller", Victor1v="https://www.youtube.com/embed/l0D5XeZ9az4", },
+
+          new User { Id = 36,
+            placement = "#36",
+            name = "Phobos",
+            verifier = "Painkiller",
+            videoUrl = "https://www.youtube.com/embed/gFNb0GycSic",
+            creator= "Painkiller",
+            Victor1= "Painkiller", Victor1v="https://www.youtube.com/embed/gFNb0GycSic",
+            Victor2= "MooshMM", Victor2v="https://www.youtube.com/embed/l6Tq-DPNJ4w"},
+
+          new User { Id = 37,
+            placement = "#37",
+            name = "test_unity_plugin_place_1",
+            verifier = "Unknown",
+            imageUrl="/images/hotlands.png",
+            creator= "Darrk_77",
+            Victor1= "Painkiller", Victor1v="https://www.youtube.com/embed/6hMdmfiTYFg",
+            Victor2= "Aiden G", Victor2v="https://www.youtube.com/embed/XjCpqZVInxI"},
+
+          new User { Id = 38,
+            placement = "#38",
+            name = "Around the World",
+            verifier = "Unknown",
+             imageUrl="/images/atw.png",
+            creator= "SourLemons, Bumpo, Zoni, Zhou Yu, Sonictheepic69, Maple and Co. Mapmaking, Hjonk, ItsDukki, ChappJack, Wienerdog, Sully, & Awehero",
+            },
+
+          new User { Id = 39,
+            placement = "#39",
+            name = "Phase Shift",
+            verifier = "Unknown",
+            imageUrl="/images/ps.png",
+            creator= "Skilledandkilled",
+            Victor1= "Milkcupatstarbucks", Victor1v="https://www.youtube.com/embed/iyGuPsuPEvY",
+            Victor2= "Aiden G", Victor2v="https://www.youtube.com/embed/yEvThIOzhqI"},
+
+          new User { Id = 40,
+            placement = "#40",
+            name = "A Last Journey",
+            verifier = "Unknown",
+             imageUrl="/images/alj.png",
+            creator= "Cr4zy",
+            },
+
+          new User { Id = 41,
+            placement = "#41",
+            name = "Rose Gold",
+            verifier = "Unknown",
+             imageUrl="/images/rg.png",
+            creator= "Gopher",
+            },
+
+          new User { Id = 42,
+            placement = "#42",
+            name = "The Poolrooms",
+            verifier = "Painkiller",
+            videoUrl="https://www.youtube.com/embed/RGkISwNROZg",
+            creator= "Bumpo & Insolence",
+            Victor1= "Painkiller", Victor1v="https://www.youtube.com/embed/RGkISwNROZg", },
+
+          new User { Id = 43,
+            placement = "#43",
+            name = "Krakr",
+            verifier = "Unknown",
+            imageUrl="/images/krakr.png",
+            creator= "Painkiller",
+            Victor1= "Painkiller", Victor1v="https://www.youtube.com/embed/JuBcp77sFts",
+            Victor2= "Aiden G", Victor2v="https://www.youtube.com/embed/njE-EaR1ytc"},
+
+          new User { Id = 44,
+            placement = "#44",
+            name = "Goofy Ahh",
+            verifier = "Unknown",
+             imageUrl="/images/ga.png",
+            creator= "Grebber",
+            },
+
+          new User { Id = 45,
+            placement = "#45",
+            name = "Sunburn",
+            verifier = "Unknown",
+             imageUrl="/images/sunburn.png",
+            creator= "Bumpo",
+            },
+
+          new User { Id = 46,
+            placement = "#46",
+            name = "Shuriken",
+            verifier = "Unknown",
+             imageUrl="/images/shuriken.png",
+            creator= "Skilledandkilled & Rocky707",
+            },
+
+          new User { Id = 47,
+            placement = "#47",
+            name = "Extra Virgin Olive Oil Complex",
+            verifier = "Darrk_77",
+            videoUrl="https://www.youtube.com/embed/qjf49jNzkJ4",
+            creator= "Darrk_77",
+            Victor1= "Darrk_77", Victor1v="https://www.youtube.com/embed/qjf49jNzkJ4", },
+
+          new User { Id = 48,
+            placement = "#48",
+            name = "Rage Fuel",
+            verifier = "Unknown",
+            imageUrl="/images/rf.png",
+            creator= "Thero & Rocky707",
+            Victor1= "DwangML", Victor1v="https://www.youtube.com/embed/DcPbR5jq8e0",
+            Victor2= "Loeh", Victor2v="https://www.youtube.com/embed/Ey0NS6YX_6U"},
+
+         new User { Id = 49,
+            placement = "#49",
+            name = "Dragon Dance",
+            verifier = "Rocky707",
+            videoUrl = "https://www.youtube.com/embed/FdLirN6HeF4",
+            creator= "Rocky707",
+            Victor1= "Rocky707", Victor1v="https://www.youtube.com/embed/FdLirN6HeF4",
+            Victor2= "Milkcupatstarbucks", Victor2v="https://www.youtube.com/embed/GJb4D1G7yUg",
+            Victor3= "Wang Allen", Victor3v="https://www.youtube.com/embed/WxKOdETttYY",
+            Victor4= "Bucketplayz", Victor4v="https://www.youtube.com/embed/dpMU-3OD7Vc",
+            Victor5= "Ze Weeby Cat", Victor5v="https://www.youtube.com/embed/HRPsHE_r1bs",
+            Victor6= "Chillken", Victor6v="https://www.youtube.com/embed/lZRvPm1wu8Y"},
+
+         new User { Id = 50,
+            placement = "#50",
+            name = "Lost City (No Shortcut)",
+            verifier = "Unknown",
+             imageUrl="/images/lc.png",
+            creator= "Thasi",
+            },
+
+
+         new User { Id = 51,
+            placement = "#51",
+            name = "Goofier Ahh",
+            verifier = "Unknown",
+             imageUrl="/images/ahh.png",
+            creator= "Grebber",
+            },
+
+         new User { Id = 52,
+            placement = "#52",
+            name = "Chaos Zone",
+            verifier = "Unknown",
+            imageUrl="/images/cz.png",
+            creator= "Weinerdog",
+            Victor1= "Brimstone", Victor1v="https://www.youtube.com/embed/gYAUrf9kMQQ", },
+
+         new User { Id = 53,
+            placement = "#53",
+            name = "Ombre",
+            verifier = "Unknown",
+            imageUrl="/images/ombre.png",
+            creator= "Sharkfinnnn",
+            Victor1= "Loeh", Victor1v="https://www.youtube.com/embed/mt-3ouV-ZG8", },
+
+         new User { Id = 54,
+            placement = "#54",
+            name = "Fantasy Gateway",
+            verifier = "Unknown",
+             imageUrl="/images/fg.png",
+            creator= "Bumpo",
+            },
+
+
+    };
+    public class User
+    {
+        public int Id { get; set; }
+        public string placement { get; set; } = string.Empty;
+        public string name { get; set; } = string.Empty;
+        public string verifier { get; set; } = string.Empty;
+        public string videoUrl { get; set; } = string.Empty;
+        public string imageUrl { get; set; } = string.Empty;
+        public string creator { get; set; } = string.Empty;
+        public string Victor1 { get; set; } = string.Empty;
+        public string Victor2 { get; set; } = string.Empty;
+        public string Victor3 { get; set; } = string.Empty;
+        public string Victor4 { get; set; } = string.Empty;
+        public string Victor5 { get; set; } = string.Empty;
+        public string Victor6 { get; set; } = string.Empty;
+        public string Victor1v { get; set; } = string.Empty;
+        public string Victor2v { get; set; } = string.Empty;
+        public string Victor3v { get; set; } = string.Empty;
+        public string Victor4v { get; set; } = string.Empty;
+        public string Victor5v { get; set; } = string.Empty;
+        public string Victor6v { get; set; } = string.Empty;
+
+    }
+
+    private User? selectedUser = null;
+
+    private void SelectUser(User user)
+    {
+        selectedUser = user;
+        StateHasChanged();
+    }
+
+    private void CloseInfo()
+    {
+        selectedUser = null;
+        StateHasChanged();
+    }
+
+    
+
+   }
